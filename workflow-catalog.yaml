@@ -1,0 +1,134 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: DynamicMethod
+  title: DynamicMethod Neel
+  description: A template to test [Workflows](https://www.google.com)
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  owner: c_neel.khamar@harness.io
+  type: service
+  parameters:
+    - title: Fill in some steps
+      properties:
+        gitusername:
+          title: Github username
+          description: Harness Project Identifier
+          type: string
+        formdata:
+          title: Secret
+          description: API Secret
+          type: string
+        jsondata:
+          title: Json Data
+          description: Payload
+          type: string
+        customvalidate:
+          title: GitHub Repos Single
+          type: string
+          description: Pick one of GitHub Repos
+          ui:field: ValidateAndFetch
+          ui:options:
+            button:
+              title: Fetch Refs
+            path: "catalog/entities/by-refs"
+            contextData:
+              loginName: items[0].metadata.name
+            request:
+              method: POST
+              headers:
+                Content-Type: application/json
+              body:
+                entityRefs:
+                  - user:default/autouser1
+                fields:
+                  - kind
+                  - metadata.name
+        custom:
+          title: GitHub Repos Multi
+          type: array
+          description: Pick multiple GitHub Repos
+          ui:field: SelectFieldFromApi
+          ui:options:
+            path: proxy/github-api/users/{{parameters.gitusername}}/repos
+            valueSelector: full_name
+            # request:
+            #   method: POST
+            #   headers:
+            #     Content-Type: application/json
+            #   body:
+            #     entityRefs:
+            #       - user:default/autouser1
+            #     fields:
+            #       - kind
+            #       - metadata.name
+        custom1:
+          title: GitHub Repos Single
+          type: string
+          description: Pick one of GitHub Repos
+          ui:field: SelectFieldFromApi
+          ui:options:
+            path: proxy/github-api/users/{{parameters.gitusername}}/repos
+            valueSelector: full_name
+            # request:
+            #   method: POST
+            #   headers:
+            #     Content-Type: application/json
+            #   body:
+            #     secret: { { parameters.formdata } }
+        custom2:
+          title: GitHub Repos Custom Single
+          type: string
+          description: Pick one of GitHub Repos
+          ui:field: SelectFieldFromApi
+          ui:options:
+            path: proxy/github-api/users/{{parameters.gitusername}}/repos
+            valueSelector: full_name
+            allowArbitraryValues: true
+            # request:
+            #   method: POST
+            #   headers:
+            #     Content-Type: application/json
+            #   body: { { parameters.jsondata } }
+        customMulti:
+          title: GitHub Repos Custom Multi
+          type: array
+          description: Pick one of GitHub Repos
+          ui:field: SelectFieldFromApi
+          ui:options:
+            label: Multi Select
+            path: proxy/github-api/users/{{parameters.gitusername}}/repos
+            valueSelector: full_name
+            allowArbitraryValues: true
+            # request:
+            #   method: POST
+            #   headers:
+            #     # Authorization: bearer eyJ0eXAiOiJ2bmQuYmFja3N0YWdlLnVzZXIiLCJhbGciOiJFUzI1NiIsImtpZCI6IjZhMG
+            #     Content-Type: text/plain
+            #   body: This is a simple plain text message
+    - title: Fill in some more steps
+      properties:
+        usernameRepo:
+          title: GitHub Repos
+          type: string
+          description: Pick one of GitHub Repos
+          ui:field: SelectFieldFromApi
+          ui:options:
+            path: proxy/github-api/users/{{parameters.gitusername}}/repos
+            valueSelector: full_name
+  steps:
+    - id: trigger
+      name: Writing the GitSync Variable
+      action: trigger:harness-custom-pipeline
+      input:
+        url: https://qa.harness.io/ng/account/zEaak-FLS425IEO7OLzMUg/module/idp-admin/orgs/default/projects/idpprojectsc/pipelines/DummyPipeline/pipeline-studio/?storeType=INLINE&stageId=DummyStage&sectionId=EXECUTION
+        inputset:
+          "username": ${{ parameters.username }}
+          "pipeline.stages.GitsyncStageTemplate.variables.greetings": ${{ parameters['pipeline.stages.GitsyncStageTemplate.variables.greetings'] }}
+        apikey: ${{ parameters.token }}
+        enableVariableMapping: true
+  output:
+    links:
+      - title: Pipeline Details
+        url: ${{ steps.trigger.output.PipelineUrl }}
