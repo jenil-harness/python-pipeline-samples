@@ -3,6 +3,7 @@ kind: Component
 metadata:
   name: testingestiongithubnew
   namespace: custom
+  description: This is something new
   annotations:
     backstage.io/techdocs-ref: dir:.
 #     harness.io/project-url: https://qa.harness.io/ng/account/zEaak-FLS425IEO7OLzMUg/home/orgs/default/projects/vigneshproject/details
