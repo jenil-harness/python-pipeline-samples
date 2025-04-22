@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: test-ingestion
+  name: testingestiongithub
   namespace: custom
   annotations:
     backstage.io/techdocs-ref: dir:.
