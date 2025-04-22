@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: testingestiongithubnew
+  name: testingestiongithubnew1
   namespace: custom
   description: This is something new
   annotations:
